@@ -1,0 +1,175 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Project_1_stage_2
+{
+    class Investment
+    {
+        protected int intTenure; // to get acessed by inherited class
+        protected float fltPrincipalAmount;// to get acessed by inherited class
+        protected float fltRate;// to get acessed by inherited class
+
+        public float PrincipalAmount // read only property (to return the value of the  variable)
+        {
+            get { return fltPrincipalAmount; }
+        }
+
+        public int Tenure// read and write property( assign the value and return the value of the variable)
+        {
+            get { return intTenure; }
+            set { if (value > 0) intTenure = value; }
+        }
+
+        private float Rate// read and write property( assign the value and return the value of the variable)
+        {
+            get { return fltRate; }
+            set { if (value > 0) fltRate = value; }
+        }
+
+        public Investment(int tenure, float principalAmount, float rate) // constructor of base class to intialize the variables
+        {
+            intTenure = tenure;
+            fltPrincipalAmount = principalAmount;
+            fltRate = rate;
+
+        }
+        public virtual float Returns() // virtual method of base class
+        {
+            return 0;
+        }
+
+
+
+    }
+    class FixedDeposit : Investment // derived  class
+    {
+        public FixedDeposit(int tenure, float principalAmount, float rate)
+            : base(tenure, principalAmount, rate) { }// invoke the constuctor of the base class and pass the variable to the base class
+        public override float Returns()// override base class method
+        {
+            return fltPrincipalAmount + (fltPrincipalAmount * fltRate / 100 * intTenure);
+        }
+
+
+    }
+    class SavingsAccount : Investment // derived class
+    {
+        private int intcompound;
+
+
+        public SavingsAccount(int tenure, float principalAmount, float rate, int compound) : base(tenure, principalAmount, rate)// invoke the constuctor of the base class and pass the variable to the base class
+        {
+            intcompound = compound;
+        }
+        public override float Returns()// override base class method
+        {
+            return fltPrincipalAmount * (1 + (fltRate / intcompound));
+        }
+
+    }
+
+    class CPF : Investment // derived class
+    {
+        public CPF(int tenure, float principalAmount, float rate)
+            : base(tenure, principalAmount, rate) { }// invoke the constuctor of the base class and pass the variable to the base class
+        public override float Returns()// override base class method
+        {
+            return (float)(fltPrincipalAmount * (2.5 / 100) * intTenure);
+        }
+    }
+
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            string strReply;
+            string strAns = "y";
+
+            while (strAns == "y")// while loop to ensure that the use can try the calculators as many times as possible
+
+            {
+                Console.WriteLine("Welcome to Klesh Investment Calculators");
+                Console.WriteLine("Enter the calculator of your choice: press F for fixed deposits, S for savings account, and C for CPF:");
+                strReply = Console.ReadLine();
+
+                if (strReply == "F")
+                {
+
+                    Console.WriteLine("This is a fixed deposit calculator");
+                    Console.WriteLine("Welcome to Klesh Investment Calculators");
+                    Console.WriteLine("This is an fixed deposit calculator");
+                    Console.Write("Enter the principal amount: ");
+                    float PrincipalAmount = float.Parse(Console.ReadLine());
+                    Console.Write("Enter the tenure(years):");
+                    int tenure = int.Parse(Console.ReadLine());
+                    Console.Write("Enter the interest rate(%): ");
+                    float rate = float.Parse(Console.ReadLine());
+
+
+
+                    FixedDeposit accObj = new FixedDeposit(tenure, PrincipalAmount, rate);// declare , instantiate and call the constructor
+
+                    Console.WriteLine("INFO");
+                    Console.WriteLine("PRINCIPAL AMOUNT: ${0}", accObj.PrincipalAmount);
+                    Console.WriteLine($"MATURITY AMOUNT: ${accObj.Returns()}");
+                }
+                else if (strReply == "S")
+                {
+
+                    Console.WriteLine("This is a savings calculator");
+                    Console.Write("Enter the principal amount:");
+                    float PrincipalAmount = float.Parse(Console.ReadLine());
+
+                    Console.Write("Enter the compounding periods per year: ");
+                    int compounds = int.Parse(Console.ReadLine());
+                    Console.Write("Enter the annual interest rate:");
+                    float rate = float.Parse(Console.ReadLine());
+                    Console.Write("Enter the tenure:");
+                    int tenure = int.Parse(Console.ReadLine());
+                    SavingsAccount acc1Obj = new SavingsAccount(tenure, PrincipalAmount, rate, compounds);// declare , instantiate and call the constructor
+                    Console.WriteLine("INFO");
+                    Console.WriteLine("PRINCIPAL AMOUNT:${0}", acc1Obj.PrincipalAmount);
+                    Console.Write("FINAL AMOUNT: $");
+                    Console.WriteLine(acc1Obj.Returns());
+                    float earnings = acc1Obj.Returns() - acc1Obj.PrincipalAmount;
+                    Console.WriteLine("Earning: ${0}", earnings.ToString());
+
+                }
+                else if (strReply == "C")
+                {
+                    Console.WriteLine("This is a CPF Ordinary account calculator");
+                    Console.WriteLine("Terms and Conditions:Money invested can be used for housing and education.\n The minimum balace required is $20000 ");
+                    Console.WriteLine("The annual interest rate is 2.5%");
+                    Console.Write("Enter the principal amount:");
+                    float PrincipalAmount = float.Parse(Console.ReadLine());
+                    Console.Write("Enter the tenure:");
+                    int tenure = int.Parse(Console.ReadLine());
+                    CPF acc2Obj = new CPF(tenure, PrincipalAmount, 0.025f);// declare , instantiate and call the constructor
+                    Console.Write("AMOUNT GAINED:$");
+                    Console.WriteLine(acc2Obj.Returns());
+                }
+                Console.Write("Would you like to try other calculators ? [y/n]:");
+                string Ans = Console.ReadLine();
+                if (Ans == "n")
+                {
+                    Console.WriteLine("Thank you for your time!");
+                    break;
+
+                }
+                    
+            }
+            Console.ReadKey();
+
+
+        }
+    }
+}
